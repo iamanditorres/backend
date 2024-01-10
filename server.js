@@ -20,6 +20,8 @@ const app = express()
 app.use(express.json()) 
 
 app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     console.log(req.path, req.method)
     next()
 })

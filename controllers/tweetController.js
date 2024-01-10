@@ -16,7 +16,6 @@ const mongoose = require('mongoose')
 
 // get all tweets
 const getTweets = async (req, res) => {
-    res.set('Access-Control-Allow-Origin', '*');
     const tweets = await Tweet.find({}).sort({createdAt:-1})
     res.status(200).json(tweets)                               
 }
