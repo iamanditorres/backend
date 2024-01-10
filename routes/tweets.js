@@ -39,8 +39,6 @@ router.get('/pullTweets', pullTweets)
 // route for getting dictionaries
 router.post('/pullDictionaries', createDictionary)
 
-
-
 // route for getting all tweets
 router.get('/', getTweets)
 
