@@ -267,7 +267,7 @@ const createDictionary = async(req, res) => {
     }
 
     // send back the data and the tweet ids used
-    res.status(200).json({data: dict, ids: randomTweets.map(o => o.id)})
+    res.status(200).json(JSON.stringify({data: dict, ids: randomTweets.map(o => o.id)}))
 }
 
 module.exports = {
