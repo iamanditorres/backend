@@ -14,57 +14,9 @@ const underscore = require('underscore')
 const Tweet = require('../models/tweetModel')
 const mongoose = require('mongoose')
 
-
-/**
- * creates a dictionary based on the passed classification
- */
-// const createDictionary = async(classification) => {
-//     const filteredTweets = await Tweet.find({classification: classification}).exec()
-//     let result = filteredTweets.map(a => a.text)
-//     let dict = {}
-
-//     for (val of result){
-//         currentString = val.split(" ")
-//         for (word of currentString){
-//             if (word in dict){
-//                 dict[word] = dict[word] + 1
-//             }else{
-//                 dict[word] = 1
-//             }
-//         }
-//     }
-
-//     return dict
-// }
-
 // get all tweets
 const getTweets = async (req, res) => {
-    // get all tweet documents
-    // todo: wrap in try catch
     const tweets = await Tweet.find({}).sort({createdAt:-1})
-
-    // let dictNoSeverity = createDictionary("No Severity")
-    // let dictLowSeverity = createDictionary("Low Severity")
-    // let dictHighSeverity = createDictionary("High Severity")
-
-    // let dictNoSeverity = createDictionaryFromRandom("No Severity")
-    // let dictLowSeverity = createDictionaryFromRandom("Low Severity")
-    // let dictHighSeverity = createDictionaryFromRandom("High Severity")
-
-    // // send documents to the browser
-
-    // dictNoSeverity.then((result) => {
-    //     console.log("No Severity:", result)
-    // })
-
-    // dictLowSeverity.then((result) => {
-    //     console.log("Low Severity:", result)
-    // })
-
-    // dictHighSeverity.then((result) => {
-    //     console.log("High Severity:", result)
-    // })
-    
     res.status(200).json(tweets)                               
 }
 
@@ -126,30 +78,33 @@ const deleteTweet = async (req, res) => {
         return res.status(400).json({error: 'No such workout'})
     }
 
-    res.status(200).json(workout)
+    res.status(200).json(tweet)
 }
 
 // update a tweet
-const updateTweet = async (req, res) => {
-    // get id from req
-    const {id} = req.params
+const updateTweets = async (req, res) => {
+    // get update request from the body
+    const update_request = req.body
 
-    // early exit if invalid id
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({error: 'No such tweet'})
-    }
+    // collect updates
+    const updateQueries = [];
+    update_request.forEach(async(element) => {
+        updateQueries.push({
+            updateOne : {
+                filter: {id:element["id"]},
+                update: {prediction: element["prediction"]}
+            },
+        })
+    });
 
-    // find by id
-    const tweet = await Tweet.findOneAndUpdate({_id: id}, {
-        ...req.body
-    })
+    // send updates
+    const classifiedTweets = Tweet.bulkWrite(updateQueries)
 
-    // early exit if no matching tweet was found
-    if (!tweet) {
-        return res.status(400).json({error: 'No such tweet'})
-    }
-
-    res.status(200).json(tweet)
+    if (classifiedTweets.length > 0){
+        res.send(400).json({error: 'Failed to update.'})
+    } else{
+        res.status(200).json({message: "Success"})    
+    }   
 }
 
 // fetch a JSON and format it
@@ -256,9 +211,10 @@ const pullTweets = async (req, res) => {
         pooledTweets.push(...data)
     }
 
-    Tweet.insertMany(pooledTweets, {ordered: false}).then((tweets) => {
+    Tweet.insertMany(pooledTweets, {ordered: false, silent: true}).then((tweets) => {
         res.status(200).send(tweets)
     }).catch((error) => {
+        console.log(error)
         res.status(400).send(error)
     })
 }
@@ -314,31 +270,12 @@ const createDictionary = async(req, res) => {
     res.status(200).json({data: dict, ids: randomTweets.map(o => o.id)})
 }
 
-/**
- * classifying tweets
- */
-
-const classifyTweets = (req, res) => {
-    /**
-     * Pseudocode:
-     * 1.) get tweets of all classifications, separated
-     * 2.) get the same amount of RANDOM tweets
-     * 3.) generate dicts for each classification
-     * 4.) choose tweets to classify
-     * 5.) classify
-     * 6.) update prediction field
-     * 7.) display to map
-     */
-
-}
-
 module.exports = {
     getTweets,
     getTweet,
     createTweet,
     deleteTweet,
-    updateTweet,
+    updateTweets,
     pullTweets,
     createDictionary,
-    classifyTweets
 }

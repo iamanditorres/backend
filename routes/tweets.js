@@ -10,10 +10,9 @@ const {
     getTweet,
     createTweet,
     deleteTweet,
-    updateTweet,
+    updateTweets,
     pullTweets,
-    createDictionary,
-    classifyTweets
+    createDictionary
 } = require('../controllers/tweetController')
 
 /*
@@ -30,11 +29,17 @@ const {
     [ ] delete all
     [ ] create many
 */
+
+// route for updating a tweet
+router.patch('/updateTweets', updateTweets)
+
 // test
 router.get('/pullTweets', pullTweets)
 
 // route for getting dictionaries
 router.post('/pullDictionaries', createDictionary)
+
+
 
 // route for getting all tweets
 router.get('/', getTweets)
@@ -49,11 +54,7 @@ router.post('/', createTweet)
 // route for deleting a tweet
 router.delete('/:id', deleteTweet)
 
-// route for updating a tweet
-router.patch('/:id', updateTweet)
 
-// route for classifying tweets
-router.patch('/classify', classifyTweets)
 
 // export the router
 module.exports = router
