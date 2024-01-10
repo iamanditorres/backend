@@ -14,13 +14,11 @@ const cors = require('cors')
 const workoutRoutes = require('./routes/workouts')
 const tweetRoutes = require('./routes/tweets')
 
-
-
 // create an express app
 const app = express()
 
 // middleware
-app.use(cors())
+// app.use(cors())
 
 // looks at any requests if it has a body (data) and 
 // passes and attaches it to the request obj
