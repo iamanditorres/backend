@@ -6,22 +6,27 @@ const express = require('express')
 // require package moongose
 const mongoose = require('mongoose')
 
+// require package cors
+const cors = require('cors')
+
 // TODO: rename to relevant name re SP
 // contains all the routes for the app
 const workoutRoutes = require('./routes/workouts')
 const tweetRoutes = require('./routes/tweets')
 
+
+
 // create an express app
 const app = express()
 
 // middleware
+app.use(cors())
+
 // looks at any requests if it has a body (data) and 
 // passes and attaches it to the request obj
 app.use(express.json()) 
 
 app.use((req, res, next) => {
-    res.set('Access-Control-Allow-Origin', '*');
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     console.log(req.path, req.method)
     next()
 })
