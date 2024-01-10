@@ -33,6 +33,11 @@ app.get('/', function(req, res){
     res.send('<body style="height:100%; overflow:hidden"><div style="height: 100%; width: 100%; display: grid; place-items: center; font-size:50px" ><p>ASTER-API IS RUNNING.</p></div></body>');
 });
 
+app.get('/cors', (req, res) => {
+    res.set('Access-Control-Allow-Origin', 'https://aster-app-cles.onrender.com/');
+    res.send('This has CORS enabled 🎈')
+})
+
 // connect to database
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
