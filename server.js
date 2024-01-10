@@ -6,8 +6,6 @@ const express = require('express')
 // require package moongose
 const mongoose = require('mongoose')
 
-// require package cors
-const cors = require('cors')
 
 // TODO: rename to relevant name re SP
 // contains all the routes for the app
@@ -18,8 +16,6 @@ const tweetRoutes = require('./routes/tweets')
 const app = express()
 
 // middleware
-// app.use(cors())
-
 // looks at any requests if it has a body (data) and 
 // passes and attaches it to the request obj
 app.use(express.json()) 
